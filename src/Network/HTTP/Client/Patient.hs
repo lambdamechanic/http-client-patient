@@ -97,7 +97,7 @@ waitIfBlocked blocker domain = do
 modifyResponse :: DomainBlocker -> RetryCounts -> Int -> Response BodyReader -> IO (Response BodyReader)
 modifyResponse blocker retryCounts maxRetries res = do
     let status = statusCode $ responseStatus res
-    when (status == 429) $ do
+    when (status == 429 || status == 503) $ do
         now <- getCurrentTime
         let domain = extractDomainFromResponse res
         forM_ (lookupRetryAfter now res) $ \retryAfter -> do
